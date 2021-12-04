@@ -4,9 +4,11 @@ import 'main.dart';
 import './timermodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final countDownTimerProvider = StateNotifierProvider<CountDownTimer, Timer?>((ref) => CountDownTimer());
+final countDownTimerProvider =
+    StateNotifierProvider<CountDownTimer, Timer?>((ref) => CountDownTimer());
+
 class CountDownTimer extends StateNotifier<Timer?> {
-  CountDownTimer():super(null);
+  CountDownTimer() : super(null);
 
   double _radius = 1;
   bool _isActive = true;
@@ -29,7 +31,6 @@ class CountDownTimer extends StateNotifier<Timer?> {
   }
 
   Stream<TimerModel> strea() async* {
-
     yield* Stream.periodic(Duration(seconds: 1), (int a) {
       String time;
       if (this._isActive) {
@@ -45,12 +46,13 @@ class CountDownTimer extends StateNotifier<Timer?> {
   }
 
   Future readSettings() async {
-    SharedPreferences prefs = Kprefs;
     work = (prefs.getInt('workTime') == null ? 30 : prefs.getInt('workTime'))!;
-    shortBreak = (prefs.getInt('shortBreak') == null ? 30 : prefs.getInt('shortBreak'))!;
-    longBreak = (prefs.getInt('longBreak') == null ? 30 : prefs.getInt('longBreak'))!;
+    shortBreak =
+        (prefs.getInt('shortBreak') == null ? 30 : prefs.getInt('shortBreak'))!;
+    longBreak =
+        (prefs.getInt('longBreak') == null ? 30 : prefs.getInt('longBreak'))!;
   }
-  
+
   void stopTimer() {
     this._isActive = false;
   }
@@ -61,21 +63,16 @@ class CountDownTimer extends StateNotifier<Timer?> {
     }
   }
 
-  void startWork() async{
-    await readSettings(); 
+  void startWork() async {
+    await readSettings();
     _radius = 1;
     _time = Duration(minutes: this.work, seconds: 0);
     _fullTime = _time;
   }
 
   void startBreak(bool isShort) {
-
     _radius = 1;
-    _time = Duration(
-      minutes: (isShort) ? shortBreak: longBreak, 
-      seconds: 0);
+    _time = Duration(minutes: (isShort) ? shortBreak : longBreak, seconds: 0);
     _fullTime = _time;
   }
-
-  
 }

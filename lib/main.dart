@@ -7,11 +7,11 @@ import './settings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-late SharedPreferences Kprefs;
+late SharedPreferences prefs;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Kprefs = await SharedPreferences.getInstance();
+  prefs = await SharedPreferences.getInstance();
 
   runApp(ProviderScope(
     child: MyApp(),

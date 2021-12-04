@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'main.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class SettingsScreen extends StatelessWidget {
   @override
@@ -28,7 +30,6 @@ class _SettingsState extends State<Settings> {
   int? workTime;
   int? shortBreak;
   int? longBreak;
-  SharedPreferences prefs = Kprefs;
 
   @override
   void initState() {
@@ -57,7 +58,7 @@ class _SettingsState extends State<Settings> {
           controller: txtWork,
           textAlign: TextAlign.center,
           keyboardType: TextInputType.number,
-          onChanged:  (val) async {
+          onChanged: (val) async {
             await prefs.setInt(WORKTIME, int.parse(val));
             setState(() {});
           },
@@ -150,20 +151,32 @@ class _SettingsState extends State<Settings> {
   }
 }
 
+class ButNumber extends StateNotifier<int> {
+  ButNumber() : super(0);
+
+  void decrement() {
+    if (state > 0) state -= 1;
+  }
+
+  void increment() {
+    state += 1;
+  }
+}
+
+final butNumberProvider = StateNotifierProvider<ButNumber, int>((ref )=>
+    ButNumber());
 typedef CallbackSetting = void Function(String, int);
 
-class SettingsButton extends StatelessWidget {
+class SettingsButton extends ConsumerWidget {
   final Color color;
-  final String text;
   final int value;
-  final String setting;
-  final CallbackSetting callback;
 
   SettingsButton(
       this.color, this.text, this.value, this.setting, this.callback);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,ref) {
+    final val = ref.watch(butNumberProvider.notifier);
     return MaterialButton(
       child: Text(this.text, style: TextStyle(color: Colors.white)),
       onPressed: () => this.callback(this.setting, this.value),
@@ -171,3 +184,23 @@ class SettingsButton extends StatelessWidget {
     );
   }
 }
+
+// class SettingsButton extends StatelessWidget {
+//   final Color color;
+//   final String text;
+//   final int value;
+//   final String setting;
+//   final CallbackSetting callback;
+//
+//   SettingsButton(
+//       this.color, this.text, this.value, this.setting, this.callback);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialButton(
+//       child: Text(this.text, style: TextStyle(color: Colors.white)),
+//       onPressed: () => this.callback(this.setting, this.value),
+//       color: this.color,
+//     );
+//   }
+// }
